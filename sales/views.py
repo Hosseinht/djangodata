@@ -7,6 +7,7 @@ from .forms import SalesSearchForm
 
 def home_view(request):
     sales_df = None
+    positions_df = None
     form = SalesSearchForm(request.POST or None)  # without or None it get executed automatically
 
     if request.method == "POST":
@@ -14,14 +15,29 @@ def home_view(request):
         date_to = request.POST.get('date_to')
         chart_type = request.POST.get('chart_type')
         # obj = Sale.objects.get(id=1)
-        qs = Sale.objects.filter(created__date__lte=date_to, created__date__gte=date_from)
-        if len(qs) > 0:
-            sales_df = pd.DataFrame(qs.values())
+        sale_qs = Sale.objects.filter(created__date__lte=date_to, created__date__gte=date_from)
+        if len(sale_qs) > 0:
+            sales_df = pd.DataFrame(sale_qs.values())
+            # positins_df = pd.DataFrame(sale_qs.get_positions()) # it's not possible.
+            # we can use get_positions on a queryset
+            positions_data = []
+            for sale in sale_qs:
+                for pos in sale.get_positions():
+                    obj = {
+                        'position_id': pos.id,
+                        'product': pos.product.name,
+                        'quantity': pos.quantity,
+                        'price': pos.price,
+                    }
+                    positions_data.append(obj)
+            positions_df = pd.DataFrame(positions_data)
+
             sales_df = sales_df.to_html()
+            positions_df = positions_df.to_html()
         else:
             print('no data')
 
-    context = {'form': form, 'sales_df': sales_df}
+    context = {'form': form, 'sales_df': sales_df, 'positions_df': positions_df}
     return render(request, 'sales/home.html', context)
 
 
