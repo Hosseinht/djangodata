@@ -1,9 +1,17 @@
 {% extends 'base.html' %}
+{% load crispy_forms_filters %}
+
 
 {% block title %}
-Home
+    Home
 {% endblock %}
 
 {% block content %}
     <h1>Hello there</h1>
+    <hr>
+    <form action="" method="POST">
+        {% csrf_token %}
+        {{ form|crispy }}
+        <button type="submit" class="btn btn-primary mt-2">Search</button>
+    </form>
 {% endblock %}

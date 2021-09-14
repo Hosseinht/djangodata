@@ -8,8 +8,8 @@
     Sales List
     <br>
     {% for object in object_list %}
-        <a href="{%  url 'sales:detail' object.id %}">{{ object.transaction_id }}</a>
-{#        or obj.get_absolute_url#}
+        <a href="{{ object.get_absolute_url }}">{{ object.transaction_id }}</a>
+{#        {%  url 'sales:detail' object.id %}#}
     {% endfor %}
 
 {% endblock %}
