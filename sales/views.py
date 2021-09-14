@@ -3,6 +3,7 @@ from django.views.generic import ListView, DetailView
 import pandas as pd
 from .models import Sale
 from .forms import SalesSearchForm
+from .utils import get_customer_from_id, get_salesman_from_id
 
 
 def home_view(request):
@@ -20,6 +21,12 @@ def home_view(request):
             sales_df = pd.DataFrame(sale_qs.values())
             # positins_df = pd.DataFrame(sale_qs.get_positions()) # it's not possible.
             # we can use get_positions on a queryset
+            sales_df['customer_id'] = sales_df['customer_id'].apply(get_customer_from_id)
+            sales_df['salesman_id'] = sales_df['salesman_id'].apply(get_salesman_from_id)
+            sales_df['created'] = sales_df['created'].apply(lambda x: x.strftime('%Y-%m-%d'))
+            sales_df.rename({'customer_id': 'Customer', 'salesman_id': 'Salesman'}, axis=1, inplace=True)
+            # inplace = True or  sales_df=sales_df.rename....
+            # axis=1 refer to columns
             positions_data = []
             for sale in sale_qs:
                 for pos in sale.get_positions():
