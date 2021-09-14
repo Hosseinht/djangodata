@@ -6,18 +6,22 @@ from .forms import SalesSearchForm
 
 
 def home_view(request):
+    sales_df = None
     form = SalesSearchForm(request.POST or None)  # without or None it get executed automatically
 
     if request.method == "POST":
         date_from = request.POST.get('date_from')
         date_to = request.POST.get('date_to')
         chart_type = request.POST.get('chart_type')
+        # obj = Sale.objects.get(id=1)
+        qs = Sale.objects.filter(created__date__lte=date_to, created__date__gte=date_from)
+        if len(qs) > 0:
+            sales_df = pd.DataFrame(qs.values())
+            sales_df = sales_df.to_html()
+        else:
+            print('no data')
 
-    qs = Sale.objects.filter(created__date=date_from)
-    obj = Sale.objects.get(id=1)
-    df1 = pd.DataFrame(qs.values())
-
-    context = {'form': form}
+    context = {'form': form, 'sales_df': sales_df}
     return render(request, 'sales/home.html', context)
 
 
