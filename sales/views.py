@@ -28,6 +28,7 @@ def home_view(request):
                         'product': pos.product.name,
                         'quantity': pos.quantity,
                         'price': pos.price,
+                        'sale_id': pos.get_sales_id()
                     }
                     positions_data.append(obj)
             positions_df = pd.DataFrame(positions_data)
