@@ -4,6 +4,7 @@ import pandas as pd
 from .models import Sale
 from .forms import SalesSearchForm
 from .utils import get_customer_from_id, get_salesman_from_id, get_chart
+from reports.forms import ReportForm
 
 
 def home_view(request):
@@ -12,7 +13,8 @@ def home_view(request):
     merged_df = None
     df = None
     chart = None
-    form = SalesSearchForm(request.POST or None)  # without or None it get executed automatically
+    search_form = SalesSearchForm(request.POST or None)  # without or None it get executed automatically
+    report_form = ReportForm()
 
     if request.method == "POST":
         date_from = request.POST.get('date_from')
@@ -56,7 +58,9 @@ def home_view(request):
         else:
             print('no data')
 
-    context = {'form': form, 'sales_df': sales_df, 'positions_df': positions_df, 'merged_df': merged_df, 'df': df,
+    context = {'report_form': report_form, 'search_form': search_form, 'sales_df': sales_df,
+               'positions_df': positions_df, 'merged_df': merged_df,
+               'df': df,
                'chart': chart}
     return render(request, 'sales/home.html', context)
 
