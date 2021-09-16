@@ -3,7 +3,7 @@ from django.views.generic import ListView, DetailView
 import pandas as pd
 from .models import Sale
 from .forms import SalesSearchForm
-from .utils import get_customer_from_id, get_salesman_from_id
+from .utils import get_customer_from_id, get_salesman_from_id, get_chart
 
 
 def home_view(request):
@@ -11,6 +11,7 @@ def home_view(request):
     positions_df = None
     merged_df = None
     df = None
+    chart = None
     form = SalesSearchForm(request.POST or None)  # without or None it get executed automatically
 
     if request.method == "POST":
@@ -46,6 +47,8 @@ def home_view(request):
 
             df = merged_df.groupby('transaction_id', as_index=False)['price'].agg('sum')
 
+            chart = get_chart(chart_type, df, labels=df['transaction_id'].values)
+
             sales_df = sales_df.to_html()
             positions_df = positions_df.to_html()
             merged_df = merged_df.to_html()
@@ -53,7 +56,8 @@ def home_view(request):
         else:
             print('no data')
 
-    context = {'form': form, 'sales_df': sales_df, 'positions_df': positions_df, 'merged_df': merged_df, 'df': df}
+    context = {'form': form, 'sales_df': sales_df, 'positions_df': positions_df, 'merged_df': merged_df, 'df': df,
+               'chart': chart}
     return render(request, 'sales/home.html', context)
 
 
