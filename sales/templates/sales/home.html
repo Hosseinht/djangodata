@@ -31,7 +31,11 @@
         </div>
     </div>
 
-    <h1>Hello there</h1>
+    {% if no_data %}
+        <div class="alert alert-warning" role="alert">
+           {{ no_data }}
+        </div>
+    {% endif %}
     <hr>
     <form action="" method="POST">
         {% csrf_token %}
@@ -49,8 +53,6 @@
         {{ df|safe }}
         <br>
         <img src="data:image/png;base64, {{ chart|safe }}" id="img">
-    {% else %}
-        <h3>No data</h3>
     {% endif %}
     <div>
         <button class="btn btn-primary not-visible" id="report-btn" data-bs-toggle="modal"
