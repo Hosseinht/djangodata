@@ -1,9 +1,20 @@
 from django.shortcuts import render
 from django.http import JsonResponse
+from django.views.generic import ListView, DetailView
 
 from .utils import get_report_image
 from .models import Report
 from profiles.models import Profile
+
+
+class ReportListView(ListView):
+    model = Report
+    template_name = 'reports/main.html'
+
+
+class ReportDetailView(DetailView):
+    model = Report
+    template_name = 'reports/detail.html'
 
 
 def create_report_view(request):
